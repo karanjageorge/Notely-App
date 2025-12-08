@@ -8,11 +8,14 @@ export const checkPassword = async (
   const { password } = req.body;
   const result = zxcvbn(password);
   if (result.score < 3) {
-    return res
-      .status(400)
-      .json({
-        message: "Password is too weak. Please use a stronger password.",
-      });
+    const feedback = result.feedback;
+
+    res.status(400).json({
+      message: "Stronger password required",
+      suggestions: feedback.suggestions,
+      warning: feedback.warning,
+    });
+    return;
   }
   next();
 };

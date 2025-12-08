@@ -22,12 +22,10 @@ export const checkUsernameAndEmail = async (
       },
     });
     if (userWithEmail) {
-      return res
-        .status(400)
-        .json({
-          message:
-            "Email u have provided is already associated with another account",
-        });
+      return res.status(400).json({
+        message:
+          "Email u have provided is already associated with another account",
+      });
     }
     next();
   } catch (error) {}

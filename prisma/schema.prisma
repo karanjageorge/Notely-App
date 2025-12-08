@@ -17,29 +17,32 @@ datasource db {
 
 
 model User {
-  id                String   @id @default(uuid())
-  firstName         String
-  lastName          String
-  username          String   @unique
-  email             String   @unique
-  password          String
-  avatar            String?  @default("")
-  dateJoined        DateTime @default(now())
-  lastProfileUpdate DateTime @updatedAt
-  isDeleted         Boolean  @default(false)
+  id                String   @id @default(uuid()) @map("UserId")
+  firstName         String   @map("FirstName")
+  lastName          String   @map("LastName")
+  username          String   @unique @map("UserName")
+  email             String   @unique @map("EmailAddress")
+  password          String   @map("Password")
+  avatar            String?  @default("") @map("Avatarurl")
+  dateJoined        DateTime @default(now()) @map("DateJoined")
+  lastProfileUpdate DateTime @updatedAt @map("LastProfileUpdate")
+  isDeleted         Boolean  @default(false) @map("IsDeleted")
 
   entries           Entry[]
+  @@map("UsersTable")
 }
 
 model Entry {
-  id          String   @id @default(uuid())
-  title       String
-  synopsis    String
-  content     String
-  isDeleted   Boolean  @default(false)
-  dateCreated DateTime @default(now())
-  lastUpdated DateTime @updatedAt
+  id          String   @id @default(uuid()) @map("EntryId")
+  title       String   @map("EntryTitle")
+  synopsis    String   @map("EntrySynopsis")
+  content     String   @db.Text  @map("EntryContent")
+  isDeleted   Boolean  @default(false) @map("IsDeleted")
+  dateCreated DateTime @default(now()) @map("DateCreated")
+  lastUpdated DateTime @updatedAt @map("LastUpdated")
 
-  userId      String
+  userId      String  @map("UserId")
   user        User     @relation(fields: [userId], references: [id])
+
+  @@map("Entries")
 }
