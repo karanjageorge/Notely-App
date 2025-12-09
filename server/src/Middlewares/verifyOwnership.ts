@@ -28,12 +28,10 @@ export const validateEntryOwnership = async (
     });
 
     if (!entry) {
-      return res
-        .status(404)
-        .json({ message: "Entry not found or unauthorized" });
+      return res.status(404).json({ message: "Note unavailable " });
     }
 
-    // Attach blog to request for downstream handlers if needed
+    // Attach entry to request for downstream handlers if needed
     (req as any).entry = entry;
 
     return next();

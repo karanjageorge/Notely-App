@@ -42,7 +42,7 @@ export const getAllEntries = async (req: Request, res: Response) => {
     });
     res.status(200).json(entries);
   } catch (error) {
-    res.status(500).json({ message: "something went wrong" });
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -70,7 +70,7 @@ export const getEntryById = async (req: Request, res: Response) => {
 
     //validating if entry exists
     if (!entry) {
-      res.status(404).json({ message: "Entry unavailable" });
+      res.status(404).json({ message: "Note unavailable" });
       return;
     }
     res.status(200).json(entry);
@@ -115,7 +115,7 @@ export const deleteEntry = async (req: Request, res: Response) => {
         isDeleted: true,
       },
     });
-    res.status(200).json({ message: "Entry moved to trash successfully" });
+    res.status(200).json({ message: "Note moved to trash successfully" });
   } catch (error) {
     res.status(500).json({ message: "Something went wrong" });
   }

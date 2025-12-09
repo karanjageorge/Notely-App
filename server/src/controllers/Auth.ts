@@ -75,28 +75,43 @@ export const logout = (req: Request, res: Response) => {
 
 export const updatePassword = async (req: Request, res: Response) => {
   try {
-    const { oldPassword, newPassword } = req.body;
-    //fetch the user from the db using the id from the req object
-    const user = await client.user.findUnique({
-      where: { id: req.user.id },
-    });
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    const userId = req.user.id;
+    if (!userId) return res.status(401).json({ message: "Unauthorized" });
+
+    const { currentPassword, newPassword, confirmNewPassword } = req.body;
+
+    // Validate input
+    if (!currentPassword || !newPassword || !confirmNewPassword) {
+      return res
+        .status(400)
+        .json({ message: "All password fields are required" });
     }
-    //compare the old password with the stored hashed password
-    const isMatch = await bcrypt.compare(oldPassword, user.password);
+
+    if (newPassword !== confirmNewPassword) {
+      return res.status(400).json({ message: "New passwords do not match" });
+    }
+
+    // Fetch user from DB
+    const user = await client.user.findUnique({ where: { id: userId } });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Check if current password matches
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: "Old password is incorrect" });
+      return res.status(400).json({ message: "Current password is incorrect" });
     }
-    //hash the new password
-    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
-    //update the password in the db
+
+    // Hash new password and update
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
     await client.user.update({
-      where: { id: req.user.id },
-      data: { password: hashedNewPassword },
+      where: { id: userId },
+      data: { password: hashedPassword },
     });
-    res.status(200).json({ message: "Password updated successfully" });
+
+    return res.status(200).json({ message: "Password updated successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Something went wrong!!" });
+    console.error("updatePassword error:", error);
+    return res.status(500).json({ message: "Something went wrong!!" });
   }
 };

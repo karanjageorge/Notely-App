@@ -1,5 +1,10 @@
 import { type Request, type Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { uploadToCloudinary } from "../utils/uploadToCloudinary.ts";
+
+interface MulterRequest extends Request {
+  file?: Express.Multer.File;
+}
 
 const client = new PrismaClient();
 
@@ -29,18 +34,29 @@ export const getUserProfile = async (req: Request, res: Response) => {
   }
 };
 
-export const updateUserProfile = async (req: Request, res: Response) => {
+export const updateUserProfile = async (req:Request, res: Response) => {
   try {
-    const userId = req.user.id; //from verifyToken middleware
+    const userId = req.user.id;
+    if (!userId) return res.status(401).json({ message: "Unauthorized" });
+
     const { firstName, lastName, username, email } = req.body;
+
+    // Upload avatar if a file is provided
+    let avatarUrl;
+    if (req.file && req.file.buffer) {
+      const uploadResult = await uploadToCloudinary(req.file.buffer);
+      avatarUrl = uploadResult.secure_url;
+    }
+
+    // Update only the fields provided by the user
     const profUpdate = await client.user.update({
       where: { id: String(userId) },
       data: {
-        firstName,
-        lastName,
-        username,
-        email,
-        avatar: req.body.avatar,
+        ...(firstName && { firstName }),
+        ...(lastName && { lastName }),
+        ...(username && { username }),
+        ...(email && { email }),
+        ...(avatarUrl && { avatar: avatarUrl }),
       },
       select: {
         firstName: true,
@@ -50,10 +66,13 @@ export const updateUserProfile = async (req: Request, res: Response) => {
         avatar: true,
       },
     });
-    res
-      .status(200)
-      .json({ message: "Profile updated successfully", profUpdate });
+
+    res.status(200).json({
+      message: "Profile updated successfully",
+      profUpdate,
+    });
   } catch (error) {
+    console.error("updateUserProfile error:", error);
     res.status(500).json({ message: "Something went wrong" });
   }
 };
@@ -104,6 +123,9 @@ export const getUserTrash = async (req: Request, res: Response) => {
         dateCreated: true,
       },
     });
+    if (!deletedEntries || deletedEntries.length === 0) {
+      res.status(404).json({ message: "No Notes in Trash" });
+    }
 
     res.status(200).json({ entries: deletedEntries });
   } catch (error) {

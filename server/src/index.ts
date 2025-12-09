@@ -77,12 +77,10 @@ app.patch(
   "/profile/update",
   verifyToken,
   checkUsernameAndEmail,
-  updateUserProfile,
-);
+  updateUserProfile
+);                                
 app.get("/profile/entries", verifyToken, getUserEntry);
 app.get("/profile/trash", verifyToken, getUserTrash);
-
-
 
 const PORT = 5001;
 app.listen(PORT, () => {
