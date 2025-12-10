@@ -34,7 +34,7 @@ export const getUserProfile = async (req: Request, res: Response) => {
   }
 };
 
-export const updateUserProfile = async (req:Request, res: Response) => {
+export const updateUserProfile = async (req: Request, res: Response) => {
   try {
     const userId = req.user.id;
     if (!userId) return res.status(401).json({ message: "Unauthorized" });

@@ -2,7 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import { login, logout, register } from "./controllers/Auth.ts";
+import multer from "multer";
+import { login, logout, register, updatePassword } from "./controllers/Auth.ts";
 
 import { checkDetails } from "./Middlewares/checkDetails.ts";
 import { checkUsernameAndEmail } from "./Middlewares/checkUserNameAndEmai.ts";
@@ -28,6 +29,8 @@ import {
 
 dotenv.config(); //this will load the .env file and make the variables available in process.env
 const app = express();
+
+const upload = multer({ storage: multer.memoryStorage() });
 app.use(express.json()); // Middleware to parse JSON bodies such as the req.body
 app.use(cookieParser()); // Middleware to parse cookies from incoming requests
 app.use(
@@ -54,7 +57,7 @@ app.post("/auth/logout", logout);
 
 //Notes routes
 app.post("/entries", verifyToken, validateNoteDetails, createNote);
-app.get("/entries", verifyToken, getAllEntries);
+app.get("/entries/all", verifyToken, getAllEntries);
 app.get("/entries/:id", verifyToken, getEntryById);
 app.patch("/entries/:id", verifyToken, validateEntryOwnership, updateEntry);
 app.patch(
@@ -77,10 +80,12 @@ app.patch(
   "/profile/update",
   verifyToken,
   checkUsernameAndEmail,
-  updateUserProfile
-);                                
+  upload.single("file"),
+  updateUserProfile,
+);
 app.get("/profile/entries", verifyToken, getUserEntry);
 app.get("/profile/trash", verifyToken, getUserTrash);
+app.patch("/profile/password", verifyToken, updatePassword);
 
 const PORT = 5001;
 app.listen(PORT, () => {

@@ -2,6 +2,7 @@
 import { create } from "zustand";
 
 interface AuthState {
+  [x: string]: any;
   user: any | null;
   token: string | null;
   isAuthenticated: boolean;

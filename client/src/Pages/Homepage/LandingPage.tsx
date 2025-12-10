@@ -1,12 +1,11 @@
 import { Link } from "react-router-dom";
-import { Button } from "../components/ui/button";
+import { Button } from "../../components/ui/button";
 import { motion } from "framer-motion";
 import { FileText } from "lucide-react";
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-white to-slate-100">
-
       {/* NAVBAR */}
       <nav className="flex items-center justify-between px-8 py-4 shadow-sm bg-white">
         <h1 className="text-2xl font-bold text-slate-800">Notely</h1>
@@ -28,7 +27,6 @@ export default function LandingPage() {
 
       {/* HERO SECTION */}
       <section className="flex flex-col md:flex-row items-center justify-center text-center md:text-left mt-20 px-10">
-        
         {/* HERO TEXT */}
         <div className="md:w-1/2 space-y-6">
           <h1 className="text-5xl font-extrabold leading-tight text-slate-900">
@@ -49,7 +47,10 @@ export default function LandingPage() {
             </Link>
 
             <Link to="/login">
-              <Button variant="outline" className="px-8 py-6 text-lg hover:bg-slate-200">
+              <Button
+                variant="outline"
+                className="px-8 py-6 text-lg hover:bg-slate-200"
+              >
                 Sign In
               </Button>
             </Link>
@@ -85,7 +86,6 @@ export default function LandingPage() {
       <footer className="mt-auto py-6 text-center text-slate-600 border-t">
         © {new Date().getFullYear()} Notely. All rights reserved.
       </footer>
-
     </div>
   );
 }

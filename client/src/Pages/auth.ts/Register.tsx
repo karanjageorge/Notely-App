@@ -59,10 +59,7 @@ export default function Register() {
     <div className="min-h-screen bg-slate-100 flex flex-col">
       {/* HEADER */}
       <div className="w-full bg-white shadow px-6 py-3">
-        <Link
-          to="/"
-          className="text-2xl font-bold hover:opacity-80 transition"
-        >
+        <Link to="/" className="text-2xl font-bold hover:opacity-80 transition">
           Notely
         </Link>
       </div>
@@ -102,9 +99,7 @@ export default function Register() {
               <Input
                 placeholder="Username"
                 value={form.username}
-                onChange={(e) =>
-                  setForm({ ...form, username: e.target.value })
-                }
+                onChange={(e) => setForm({ ...form, username: e.target.value })}
                 required
               />
 
@@ -113,9 +108,7 @@ export default function Register() {
                 placeholder="Email"
                 type="email"
                 value={form.email}
-                onChange={(e) =>
-                  setForm({ ...form, email: e.target.value })
-                }
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
                 required
               />
 

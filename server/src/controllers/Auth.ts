@@ -26,6 +26,7 @@ export const register = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
   try {
     const { identifier, password } = req.body;
+
     const user = await client.user.findFirst({
       where: {
         OR: [{ username: identifier }, { email: identifier }],
@@ -37,11 +38,13 @@ export const login = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(400).json({ message: "Wrong login credentials" });
     }
+
     //comparing the input password to the stored hashed password in the db
     const passwordMatch = bcrypt.compare(password, user.password);
     if (!passwordMatch) {
       return res.status(400).json({ message: "Wrong login credentials" });
     }
+
     //create a payload to be sent to the jwt sign method and hide the password
     const payload = {
       id: user.id,
@@ -50,12 +53,16 @@ export const login = async (req: Request, res: Response) => {
       username: user.username,
       email: user.email,
     };
-    //generate a token using  jwt
+
+    //generate a token using jwt
     const token = jwt.sign(payload, process.env.JWT_SECRET_KEY!, {
       expiresIn: "7d",
     });
-    res.status(200).cookie("authToken", token).json(payload);
-    res.status(200).json({ message: "Logged in successfully" });
+
+    res
+      .status(200)
+      .cookie("authToken", token)
+      .json({ message: "Logged in successfully", payload });
   } catch (error) {
     res.status(500).json({ message: "Something went wrong!!" });
   }
